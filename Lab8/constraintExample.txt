@@ -1,0 +1,37 @@
+Below is a constraint which checks that the user whose data is being inserted into user_profile table, is not an admin. There will only be one admin.
+
+Users Table:
+id name  rank
+1  John  User
+2  David Admin
+3  Dave  User
+
+User Profile Table:
+id employee_code user_id
+1  200323        1
+2  200324        3      
+
+
+CREATE FUNCTION dbo.isNotAdmin (@code int)
+RETURNS VARCHAR(5)
+AS
+BEGIN
+    IF @code <> (SELECT id FROM users WHERE rank = 'Admin')
+        return 'False'
+    return 'True'
+END;
+GO
+
+
+
+
+CREATE TABLE user_profile (
+id int PRIMARY KEY,
+employee_code int NOT NULL,
+user_id CONSTRAINT isNotAdmin CHECK (dbo.isNotAdmin(user_id) = 'True') int NOT NULL,
+);
+
+
+
+--------------------------------------------------------------------------------------------------------------------------
+
